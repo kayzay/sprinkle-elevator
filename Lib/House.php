@@ -10,8 +10,7 @@ namespace Lib;
  */
 class House
 {
-    public static function getTempString()
-    {
-        echo "Hi";
-    }
+    const QUANTITY_FLOOR = 4;
+    
+
 }
