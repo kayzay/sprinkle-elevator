@@ -18,4 +18,13 @@ class Rules
         return ($numberFloor >= 1 && $numberFloor <= House::QUANTITY_FLOOR);
     }
     
+    public static function checkStopElevator($floor, $floorMax)
+    {
+        if ($floor >= 1 && $floor <= House::QUANTITY_FLOOR) {
+       
+            return ($floor <= $floorMax) ? true : false;
+        }
+        return false;
+    }
+    
 }

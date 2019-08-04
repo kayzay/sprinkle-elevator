@@ -37,11 +37,15 @@ $stack->addEventRun(
         ->addPeople(new People(ElevatorPanel::DIRECTIONS_DOWN, 1))
 );
 $stack->buildingRoute();
-//dbg($stack->getRoute());
 $elevator = new Elevator($stack->getRoute());
+//$elevator->AddEventStop(3);
+
+dbg(date("H:i:s"));
 $elevator->run();
-
-
+dbg(date("H:i:s"));
+sleep(2);
+//$elevator->removeStop();
+dbg(date("H:i:s"));
 
 function dbg($parr) {
     echo '<pre>';
