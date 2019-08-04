@@ -11,8 +11,14 @@ namespace Lib;
 
 class SendMessages
 {
-    public static function send($massage)
+   private static $mass = '';
+    public static function add($massage)
     {
-        echo $massage . '<br>';
+        self::$mass .= $massage . "\n\r<br>";
+    }
+
+    public static function send()
+    {
+        echo self::$mass;
     }
 }

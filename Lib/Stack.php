@@ -29,10 +29,10 @@ class Stack
             if (Rules::checkFloor($eventRun->getFloor())) {
                     $this->eventRun[] = $eventRun;
             } else {
-                SendMessages::send('Этот этаж не входит в констркцию дома');
+                SendMessages::add('Этот этаж не входит в констркцию дома');
             }
         } catch (Error $er) {
-            SendMessages::send('что то пошло не так на: ' . $er->getFile() . ' ' . $er->getLine());
+            SendMessages::add('что то пошло не так на: ' . $er->getFile() . ' ' . $er->getLine());
         }
     }
 

@@ -13,7 +13,7 @@ class Elevator extends House
 {
     private $pavedRoute = [],
             $floorStop = 0,
-            $seveProcces = [],
+            $saveProcess = [],
             $eventStop = [];
     
     const HEIGHT = 4;
@@ -39,7 +39,7 @@ class Elevator extends House
     public function removeStop()
     {
      //   dbg($this->pavedRoute);
-        SendMessages::send("Лифт снова в движении");
+        SendMessages::add(date("H:i:s") . " - Лифт снова в движении");
         $this->run();
 
     }
@@ -49,15 +49,15 @@ class Elevator extends House
         $moveToFloor = [];
         $pavedRoute = $this->pavedRoute;
        if (count($pavedRoute[ElevatorPanel::DIRECTIONS_UP]) && count($pavedRoute[ElevatorPanel::DIRECTIONS_DOWN])) {
-           if (!array_key_exists(self::DEFAULT_FLOOR, $pavedRoute[ElevatorPanel::DIRECTIONS_UP]) && empty($this->seveProcces)) {
-             SendMessages::send( " - Лифт начел движения с первого этажа");
+           if (!array_key_exists(self::DEFAULT_FLOOR, $pavedRoute[ElevatorPanel::DIRECTIONS_UP]) && empty($this->saveProcces)) {
+             SendMessages::add(date("H:i:s") . " - Лифт начел движения с первого этажа");
            } else {
                $this->motionUP($moveToFloor, $pavedRoute[ElevatorPanel::DIRECTIONS_UP]);
                if (!$this->eventStop) {
-                   SendMessages::send("Подбор и вы садка людей по моршрету с низу верх законина");
+                   SendMessages::add(date("H:i:s") . " - Подбор и вы садка людей по моршрету с низу верх законина");
                    $_max =  max(array_keys($pavedRoute[ElevatorPanel::DIRECTIONS_DOWN]));
                    if ($this->floorStop < $_max) {
-                       SendMessages::send("был совершон вазов с {$_max} и начил движение");
+                       SendMessages::add(date("H:i:s") . " - Был совершон вазов с {$_max} и начил движение");
                        $this->floorStop = $_max;
                    }
                    $this->motionDown($moveToFloor, $pavedRoute[ElevatorPanel::DIRECTIONS_DOWN]);
@@ -66,15 +66,15 @@ class Elevator extends House
        } elseif (count($pavedRoute[ElevatorPanel::DIRECTIONS_UP])) {
            $this->motionUP($moveToFloor, $pavedRoute[ElevatorPanel::DIRECTIONS_UP]);
        } elseif (count($pavedRoute[ElevatorPanel::DIRECTIONS_DOWN])) {
-           if (!array_key_exists(self::DEFAULT_FLOOR, $pavedRoute[ElevatorPanel::DIRECTIONS_UP]) && empty($this->seveProcces)) {
-               SendMessages::send( " - Лифт начел движения с первого этажа");
+           if (!array_key_exists(self::DEFAULT_FLOOR, $pavedRoute[ElevatorPanel::DIRECTIONS_UP]) && empty($this->saveProcces)) {
+               SendMessages::add(date("H:i:s") .  " - Лифт начел движения с первого этажа");
            }
 
            $_max =  max(array_keys($pavedRoute[ElevatorPanel::DIRECTIONS_DOWN]));
-           if (!empty($this->seveProcces)) {
-               if ($this->seveProcces['f'] < $_max) {
-                   SendMessages::send("был совершон вазов с {$_max} и начил движение");
-                   $this->seveProcces['f'] = $_max;
+           if (!empty($this->saveProcces)) {
+               if ($this->saveProcces['f'] < $_max) {
+                   SendMessages::add(date("H:i:s") . " - был совершон вазов с {$_max} и начил движение");
+                   $this->saveProcces['f'] = $_max;
                }
            }
 
@@ -82,25 +82,26 @@ class Elevator extends House
            $this->floorStop  = $_max;
            $this->motionDown($moveToFloor, $pavedRoute[ElevatorPanel::DIRECTIONS_DOWN]);
        } else {
-           SendMessages::send('вызовы не обноружены лифт стоит на 1 этаже');
+           SendMessages::add(date("H:i:s") . ' - вызовы не обноружены лифт стоит на 1 этаже');
        }
+        return $this;
     }
 
     private function motionUP($moveToFloor, $pavedRoute)
     {
-        $step = (!empty($this->seveProcces))
-            ?  $this->seveProcces
+        $step = (!empty($this->saveProcces))
+            ?  $this->saveProcces
             : [
                 'm' => self::HEIGHT,
                 'f' => self::DEFAULT_FLOOR
             ];
-        if (!empty($this->seveProcces)) {
+        if (!empty($this->saveProcces)) {
             $this->removeEventStop();
         }
         $flag = false;
         for ($move = $step['m'], $floor = $step['f']; $move <= House::getHeightHouse(); $move++) {
             if ($flag) {
-                SendMessages::send(" - Лифт в место назначения и остановился");
+                SendMessages::add(date("H:i:s") . " - Лифт в место назначения и остановился");
             }
 
             if (($move % self::HEIGHT) === 0) {
@@ -110,14 +111,14 @@ class Elevator extends House
                     $moveToFloor[$moveTo] = $moveTo;
 
                     if (in_array($floor, $moveToFloor)) {
-                        SendMessages::send(" - Лифт открил двери на {$floor} этаже, вышел затем  зашол человек и задал моршрут на {$moveTo} - этаж");
-                        SendMessages::send(" - Лифт закрыл дверь и начил движение");
+                        SendMessages::add(date("H:i:s") . " - Лифт открил двери на {$floor} этаже, вышел затем  зашол человек и задал моршрут на {$moveTo} - этаж");
+                        SendMessages::add(date("H:i:s") . " - Лифт закрыл дверь и начил движение");
 
                         unset($moveToFloor[$floor]);
                     } else {
 
-                        SendMessages::send(" - Лифт открил двери на {$floor} этаже, зашол человек и задал моршрут на {$moveTo} - этаж");
-                        SendMessages::send(" - Лифт закрыл дверь и начил движение");
+                        SendMessages::add(date("H:i:s") . " - Лифт открил двери на {$floor} этаже, зашол человек и задал моршрут на {$moveTo} - этаж");
+                        SendMessages::add(date("H:i:s") . " - Лифт закрыл дверь и начил движение");
                     }
 
                     unset($pavedRoute[$floor]);
@@ -125,19 +126,19 @@ class Elevator extends House
                 } elseif (in_array($floor, $moveToFloor)) {
                     unset($moveToFloor[$floor]);
 
-                    SendMessages::send(" - Лифт открил двери на {$floor} этаже, вышел человек");
+                    SendMessages::add(date("H:i:s") . " - Лифт открил двери на {$floor} этаже, вышел человек");
            
                 }
 
 
                 if (isset($this->eventStop[$floor]) && ($move % 2) == 0) {
-                    $this->seveProcces = [
+                    $this->saveProcces = [
                         'm' => $move,
                         'f' => $floor
                     ];
                     $this->pavedRoute[ElevatorPanel::DIRECTIONS_UP] = $moveToFloor;
 
-                    SendMessages::send("Люди в ливте нажад кнопку стоп");
+                    SendMessages::add(date("H:i:s") . " - Люди в ливте нажад кнопку стоп  возле - {$floor} этажа");
                     break;
                 }
 
@@ -150,30 +151,30 @@ class Elevator extends House
                 $floor++;
             }
 
-         //   sleep(self::SPEED);
+            sleep(self::SPEED);
         }
     }
 
     private function motionDown($moveToFloor, $pavedRoute)
     {
-        $step = (!empty($this->seveProcces))
-            ?  $this->seveProcces
+        $step = (!empty($this->saveProcces))
+            ?  $this->saveProcces
             : [
                 'm' => $this->floorStop,
                 'f' => $this->floorStop
             ];
-        if (!empty($this->seveProcces)) {
+        if (!empty($this->saveProcces)) {
             $this->removeEventStop();
         }
         for ($move =  House::calculateHeight($step['m']), $floor = $step['f']; $move > 1; $move--) {
 
             if (isset($this->eventStop[$floor])) {
-                $this->seveProcces = [
+                $this->saveProcces = [
                     'm' => $step['m'],
                     'f' => $floor,
                 ];
                 $this->pavedRoute[ElevatorPanel::DIRECTIONS_DOWN] = $moveToFloor;
-                SendMessages::send("Люди в ливте нажад кнопку стоп");
+                SendMessages::add(date("H:i:s") . " - Люди в ливте нажад кнопку стоп");
                 break;
             }
 
@@ -183,24 +184,24 @@ class Elevator extends House
                     $moveToFloor[$moveTo] = $moveTo;
 
                     if (in_array($floor, $moveToFloor)) {
-                        SendMessages::send(" - Лифт открил двери на {$floor} этаже, вышел затем  зашол человек и задал моршрут на {$moveTo} - этаж");
-                        SendMessages::send(" - Лифт закрыл дверь и начил движение");
+                        SendMessages::add(date("H:i:s") . " - Лифт открил двери на {$floor} этаже, вышел затем  зашол человек и задал моршрут на {$moveTo} - этаж");
+                        SendMessages::add(date("H:i:s") . " - Лифт закрыл дверь и начил движение");
 
                         unset($moveToFloor[$floor]);
                     } else {
-                        SendMessages::send(" - Лифт открил двери на {$floor} этаже, зашол человек и задал моршрут на {$moveTo} - этаж");
-                        SendMessages::send(" - Лифт закрыл дверь и начил движение");
+                        SendMessages::add(date("H:i:s") . " - Лифт открил двери на {$floor} этаже, зашол человек и задал моршрут на {$moveTo} - этаж");
+                        SendMessages::add(date("H:i:s") . " - Лифт закрыл дверь и начил движение");
                     }
 
                     unset($pavedRoute[$floor]);
 
                 } elseif (in_array($floor, $moveToFloor)) {
-                        SendMessages::send(" - Лифт открил двери на {$floor} этаже, вышел человек");
+                        SendMessages::add(date("H:i:s") . " - Лифт открил двери на {$floor} этаже, вышел человек");
 
                     if ($floor == self::DEFAULT_FLOOR) {
-                        SendMessages::send(" - Лифт закрыл дверь.");
+                        SendMessages::add(date("H:i:s") . " - Лифт закрыл дверь.");
                     } else {
-                        SendMessages::send(" - Лифт закрыл дверь и начил движение");
+                        SendMessages::add(date("H:i:s") . " - Лифт закрыл дверь и начил движение");
                     }
                     unset($moveToFloor[$floor]);
 
@@ -210,12 +211,12 @@ class Elevator extends House
                 }
                 $floor--;
             }
-
+            sleep(self::SPEED);
         }
     }
 
     private function removeEventStop ()
     {
-        unset($this->seveProcces, $this->eventStop);
+        unset($this->saveProcces, $this->eventStop);
     }
 }
