@@ -9,7 +9,7 @@
 namespace Lib;
 
 
-class Elevator
+class Elevator extends House
 {
 
 }

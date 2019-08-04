@@ -11,5 +11,15 @@ namespace Lib;
 
 class Stack
 {
+    private $eventRun;
 
+    public function addEventRun($eventRun)
+    { 
+        $this->eventRun[] = $eventRun;
+    }
+
+    public function getEventRun()
+    {
+        return $this->eventRun;
+    }
 }

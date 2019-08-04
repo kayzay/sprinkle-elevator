@@ -6,9 +6,34 @@
  * Time: 22:55
  */
 
-use Lib\House;
+
+use Lib\Floor;
+use Lib\People;
+use Lib\Stack;
+
 require_once __DIR__ . "/vendor/autoload.php";
 
 
+$stack = new Stack();
+$stack->addEventRun(
+    (new Floor(1))
+    ->addPeople(new People(People::DIRECTIONS_UP, 4))
+);
+$stack->addEventRun(
+    (new Floor(3))
+        ->addPeople(new People(People::DIRECTIONS_DOWN, 2))
+);
+$stack->addEventRun(
+    (new Floor(4))
+        ->addPeople(new People(People::DIRECTIONS_DOWN, 1))
+);
 
-House::getTempString();
+
+
+dbg($stack->getEventRun());
+
+function dbg($parr) {
+    echo '<pre>';
+    var_export($parr);
+    echo '</pre>';
+}
