@@ -11,30 +11,26 @@ namespace Lib;
 
 class People
 {
-    private static $directions;
+    private $directions;
     private $floor = null;
-
-    const DIRECTIONS_UP = 'up';
-    const DIRECTIONS_DOWN = 'down';
-
-
 
     public function __construct($directions, $floor)
     {
-        self::$directions = [
-            self::DIRECTIONS_UP => null,
-            self::DIRECTIONS_DOWN => null
+        $this->directions = [
+            ElevatorPanel::DIRECTIONS_UP => null,
+            ElevatorPanel::DIRECTIONS_DOWN => null
         ];
 
-        if (isset(self::$directions[$directions]))
-            self::$directions[$directions] = true;
+        if (array_key_exists($directions, $this->directions)) {
+            $this->directions[$directions] = true;
+        }
 
         $this->floor = $floor;
     }
 
-    public static function getDirections()
+    public function getDirections()
     {
-        return array_search(true, self::$directions);
+        return array_search(true, $this->directions);
     }
 
     public function getFloor()

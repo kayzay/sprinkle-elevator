@@ -11,7 +11,7 @@ namespace Lib;
 
 class Floor
 {
-   private $peoples = [], $floor = null;
+   private $peoples = null, $floor = null;
     
     public function __construct($floor)
     {
@@ -23,5 +23,19 @@ class Floor
         $this->peoples = $people;
         
         return $this;
+    }
+
+    public function getFloor()
+    {
+        return $this->floor;
+    }
+
+
+    /**
+     * @return People
+     */
+    public function getPeoples()
+    {
+        return $this->peoples;
     }
 }

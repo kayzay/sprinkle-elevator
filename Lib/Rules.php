@@ -11,5 +11,11 @@ namespace Lib;
 
 class Rules
 {
- const QUANTITY_PEOPLES = 4;
+    const QUANTITY_PEOPLES = 4;
+
+    public static function checkFloor(int $numberFloor) :bool 
+    {
+        return ($numberFloor >= 1 && $numberFloor <= House::QUANTITY_FLOOR);
+    }
+    
 }
